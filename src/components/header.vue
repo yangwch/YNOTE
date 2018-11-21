@@ -13,11 +13,10 @@
   }
 </script>
 <style lang="less" scoped>
-  @height: 60px;
+  @height: 50px;
   .header {
-    position: fixed;
-    top: 0;
-    left: 0;
+    min-height: @height;
+    max-height: @height;
     height: @height;
     line-height: @height;
     width: 100%;
