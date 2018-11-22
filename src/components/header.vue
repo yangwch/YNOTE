@@ -3,6 +3,9 @@
     <h1>
       <img src="../assets/logo.png" alt=""/> YNOTE
     </h1>
+    <div class="sys-buttons">
+      <a href="###">登录</a>
+    </div>
   </div>
 </template>
 <script type="text/javascript">
@@ -31,8 +34,18 @@
       display: inline-block;
     }
     img {
-      height: 40%;
+      height: 50%;
       margin: 5px 0 0 10px;
+      transform: rotate(120deg);
+    }
+    .sys-buttons {
+      float: right;
+      height: @height;
+      line-height: @height;
+      padding-right: 20px;
+      a {
+        font-size: 16px;
+      }
     }
   }
 </style>
