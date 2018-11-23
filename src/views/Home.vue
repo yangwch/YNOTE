@@ -6,7 +6,7 @@
     </div>
     <!-- 所有便签 -->
     <template v-for="(note, index) in notes">
-      <vue-draggable-resizable v-if="!note.delete" :class="['note-item']" :key="index" :w="note.w || 200" :h="note.h || 300" :x="note.x || 200" :y="note.y || 0" v-on:dragging="onDrag" v-on:resizing="onResize" :parent="true" :drag-handle="'.drag .icon-drag'">
+      <vue-draggable-resizable v-if="!note.delete" :class="['note-item']" :key="index" :w="note.w || 200" :h="note.h || 300" :x="note.x || 200" :y="note.y || 0" v-on:dragging="onDrag" v-on:resizing="onResize" :parent="true" :drag-handle="'.drag'">
         <!-- {{note.content}} -->
         <div class="pane-container">
           <editor :value="note" @onDelete="onDelete"/>
@@ -77,19 +77,23 @@ export default {
     },
     // 便签拖动时
     onDrag: function (x, y) {
-      this.x = x
-      this.y = y
+      setTimeout(() => {
+        this.x = x
+        this.y = y
+      }, 0)
     },
     // 添加一个
     onAdd () {
-      this.notes.push({
-        w: 200,
-        h: 300,
-        x: 300,
-        y: 10,
-        title: '',
-        content: ``,
-        theme: ''
+      setTimeout(() => {
+        this.notes.push({
+          w: 200,
+          h: 300,
+          x: 300,
+          y: 10,
+          title: '',
+          content: ``,
+          theme: ''
+        })
       })
     },
     // 删除

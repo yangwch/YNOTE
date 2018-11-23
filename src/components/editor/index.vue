@@ -1,12 +1,25 @@
 <template>
   <div :class="['edit-pane', editorValue.theme]">
     <div class="drag">
-      <i class="iconfont icon-delete" @click="$emit('onDelete', editorValue)"></i>
-      <i class="iconfont icon-skin" @click="showSinks"></i>
-      <i class="iconfont icon-drag"></i>
+      <ul>
+        <!-- 删除 -->
+        <li>
+           <i class="iconfont icon-delete" @click="onDel"></i>
+        </li>
+        <!-- 皮肤 -->
+        <li>
+          <i class="iconfont icon-skin" @click="showSinks"></i>
+          <div class="sel-skins" v-show="showSelSinks">
+            <div v-for="(skin, index) in skinList" :key="index" :class="skin" @click="onSetSink(skin)"></div>
+          </div>
+        </li>
+        <!-- <li>
+          <i class="iconfont icon-drag"></i>
+        </li> -->
+      </ul>
     </div>
     <div class="title">
-      <input type="text" v-model="editorValue.title" @change="onContentChange">
+      <input type="text" @click="() => { console.log(this) }" v-model="editorValue.title" @change="onContentChange">
     </div>
     <iframe ref="editor" width="100%" height="100%" frameborder="0"></iframe>
   </div>
@@ -20,7 +33,8 @@ export default {
       frameDoc: null,
       // 绑定的值
       editorValue: Object.assign({}, this.value),
-      skinList: ['default', 'cfc', 'ccf']
+      skinList: ['default', 'cfc', 'ccf'],
+      showSelSinks: false
     }
   },
   props: {
@@ -69,7 +83,18 @@ export default {
      * 显示可选皮肤
      */
     showSinks () {
-      alert('showSinks')
+      this.showSelSinks = !this.showSelSinks
+    },
+    // 设置皮肤
+    onSetSink (skin) {
+      this.editorValue.theme = skin
+      this.showSelSinks = false
+    },
+    // 删除
+    onDel () {
+      if (window.confirm('确定要删除吗？')) {
+        this.$emit('onDelete', this.editorValue)
+      }
     }
   }
 }
@@ -81,6 +106,8 @@ export default {
     display: flex;
     flex-direction: column;
     background: #ffc;
+    padding: 0;
+    text-align: right;
     // 淡绿
     &.cfc {
       background: #cfc;
@@ -103,17 +130,48 @@ export default {
       }
     }
     .drag {
-      position: absolute;
-      right: 0;
-      top: 0;
-      border-radius: 50%;
       font-size: 14px;
-      height: 16px;
+      height: 14px;
       padding: 1px;
-      i {
-        color: dimgray;
-        &.icon-drag {
-          cursor: nwse-resize;
+      ul {
+        display: block;
+        list-style-type: none;
+        text-align: right;
+        padding: 0;
+        margin: 0;
+        li {
+          display: inline-block;
+          position: relative;
+        }
+        i {
+          color: dimgray;
+          &.icon-drag {
+            cursor: nwse-resize;
+          }
+        }
+      }
+      // 选择皮肤
+      .sel-skins {
+        position: absolute;
+        right: -2px;
+        width: auto;
+        z-index: 10;
+        >div {
+          width: 16px;
+          height: 16px;
+          margin: 2px;
+          border: 1px dotted blue;
+          cursor: pointer;
+          &.default {
+            background: #ffc;
+          }// 淡绿
+          &.cfc {
+            background: #cfc;
+          }
+          // 淡紫
+          &.ccf {
+            background: #ccf;
+          }
         }
       }
     }
