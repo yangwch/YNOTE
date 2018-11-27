@@ -4,7 +4,8 @@
       <img src="../assets/logo.png" alt=""/> YNOTE
     </h1>
     <div class="sys-buttons">
-      <a href="###">登录</a>
+      <router-link class="sys-buttons" to="/login">登录</router-link>
+      <router-link class="sys-buttons" to="/reg">注册</router-link>
     </div>
   </div>
 </template>

@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+const Home = () => import('./views/Home.vue')
+// 注册
+const reg = () => import('./views/register.vue')
+// 登录
+const login = () => import('./views/login.vue')
 
 Vue.use(Router)
 
@@ -12,6 +16,16 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/reg',
+      name: 'reg',
+      component: reg
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: login
     },
     {
       path: '/about',
