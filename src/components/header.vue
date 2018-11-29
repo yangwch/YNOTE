@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <h1>
-      <img src="../assets/logo.png" alt=""/> YNOTE
+      <!-- <img src="../assets/logo.png" alt=""/> --> YNOTE
     </h1>
     <div class="sys-buttons">
       <router-link class="sys-buttons" to="/login">登录</router-link>
@@ -31,6 +31,7 @@
       height: 100%;
       padding: 0;
       margin: 0;
+      margin-left: 20px;
       line-height: @height;
       display: inline-block;
     }

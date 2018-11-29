@@ -14,7 +14,8 @@
             <label for="username">用户名</label>
             <md-input name="username" id="username" v-model="form.username" :disabled="sending" />
             <span class="md-error" v-if="!$v.form.username.required">用户名为必填项</span>
-            <span class="md-error" v-else-if="!$v.form.username.minlength || !$v.form.username.maxlength">用户名长度3-15，字母开头，可包含字母数字下划线</span>
+            <span class="md-error" v-else-if="!$v.form.username.minlength || !$v.form.username.maxlength || !$v.form.username.regrule">用户名长度3-15，字母开头，可包含字母数字下划线</span>
+            <span class="md-error" v-if="!$v.form.username.unique">用户名已存在</span>
           </md-field>
           <!-- 姓名 -->
           <md-field :class="getValidationClass('name')">
@@ -35,12 +36,11 @@
             <div class="md-layout-item md-small-size-100">
               <md-field :class="getValidationClass('sex')">
                 <label for="sex">性别</label>
-                <md-select name="sex" id="sex" v-model="form.sex" md-dense :disabled="sending">
+                <md-select name="sex" v-model="form.sex" md-dense :disabled="sending">
                   <md-option value="保密">保密</md-option>
                   <md-option value="男">男</md-option>
                   <md-option value="女">女</md-option>
                 </md-select>
-                <span class="md-error"></span>
               </md-field>
             </div>
           </div>
@@ -61,7 +61,7 @@
         </md-card-actions>
       </md-card>
 
-      <md-snackbar :md-active.sync="userSaved">{{lastUser}}</md-snackbar>
+      <md-snackbar :md-active.sync="userSaved">{{message}}</md-snackbar>
     </form>
   </div>
 </template>
@@ -76,9 +76,9 @@
     maxLength
   } from 'vuelidate/lib/validators'
   import VueMaterial from 'vue-material'
-  // api
-  import {regNewuser} from '@/api/user'
   Vue.use(VueMaterial)
+  // api
+  import {regNewuser, checkUserExists} from '@/api/user'
 
   export default {
     name: 'reg',
@@ -93,14 +93,33 @@
       },
       userSaved: false,
       sending: false,
-      lastUser: null
+      message: null
     }),
     validations: {
       form: {
         username: {
           required,
           minLength: minLength(3),
-          maxLength: maxLength(15)
+          maxLength: maxLength(15),
+          regrule: (value) => {
+            let flag = /^[a-zA-Z][a-zA-Z0-9_]{3,15}$/.test(value)
+            return flag
+          },
+          unique: (value) => {
+            let flag = /^[a-zA-Z][a-zA-Z0-9_]{3,15}$/.test(value)
+            if (!flag) {
+              return flag
+            }
+            return new Promise((resolve) => {
+              checkUserExists(value).then(result => {
+                if (result.err) {
+                  resolve(false)
+                } else {
+                  resolve(true)
+                }
+              })
+            })
+          }
         },
         name: {
           required,
@@ -140,24 +159,17 @@
         regNewuser(this.form).then(result => {
           let {data} = result
           if (!data.err) {
-            this.lastUser = `用户名：${this.form.username} 姓名：${this.form.name} 已成功注册，即将跳转到登录！`
+            this.message = `用户名：${this.form.username} 姓名：${this.form.name} 已成功注册，即将跳转到登录！`
             setTimeout(() => {
               this.$router.push('/login')
             }, 3000)
           } else {
-            this.lastUser = `用户名重复，注册失败！`
+            this.message = `用户名重复，注册失败！`
           }
           this.userSaved = true
           this.sending = false
           this.clearForm()
         })
-        // Instead of this timeout, here you can call your API
-        // window.setTimeout(() => {
-        //   this.lastUser = `${this.form.username} ${this.form.lastName}`
-        //   this.userSaved = true
-        //   this.sending = false
-        //   this.clearForm()
-        // }, 1500)
       },
       validateUser () {
         this.$v.$touch()

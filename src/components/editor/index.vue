@@ -13,15 +13,12 @@
             <div v-for="(skin, index) in skinList" :key="index" :class="skin" @click="onSetSink(skin)"></div>
           </div>
         </li>
-        <!-- <li>
-          <i class="iconfont icon-drag"></i>
-        </li> -->
       </ul>
     </div>
     <div class="title">
-      <input type="text" @click="() => { console.log(this) }" v-model="editorValue.title" @change="onContentChange">
+      <input type="text" placeholder="标题" v-model="editorValue.title" @change="onContentChange">
     </div>
-    <iframe ref="editor" width="100%" height="100%" frameborder="0"></iframe>
+    <iframe ref="editor" frameborder="0"></iframe>
   </div>
 </template>
 <script type="text/javascript">
@@ -51,6 +48,12 @@ export default {
       }
     }
   },
+  watch: {
+    value (v) {
+      let {title, content, ...attr} = v
+      this.editorValue = Object.assign(this.editorValue, attr)
+    }
+  },
   mounted() {
     this.initEditor()
   },
@@ -65,7 +68,7 @@ export default {
       frameDoc.open()
       frameDoc.close()
       let editBody = frameDoc.body
-      editBody.innerHTML = this.editorValue.content
+      editBody.innerHTML = this.editorValue.content || ''
       // 添加事件
       editBody.onblur = this.onContentChange
     },
@@ -108,6 +111,7 @@ export default {
     background: #ffc;
     padding: 0;
     text-align: right;
+    overflow: hidden;
     // 淡绿
     &.cfc {
       background: #cfc;
@@ -121,6 +125,7 @@ export default {
       min-height: 20px;
       max-height: 20px;
       display: flex;
+      border-bottom: 1px dotted #ccc;
       input {
         height: 20px;
         width: 100%;
@@ -176,7 +181,7 @@ export default {
       }
     }
     iframe {
-      height: 100%;
+      height: calc(100% - 40px);
       width: 100%;
       background: transparent;
     }
