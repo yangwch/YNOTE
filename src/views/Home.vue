@@ -62,8 +62,11 @@ export default {
       getNotes().then(result => {
         // console.log('notes', result)
         if (!result.data.err) {
-          this.notes = result.data.res || []
-          this.startSaveTimer()
+          let {res, loginState} = result.data
+          this.notes = res || []
+          if (loginState === 'on') {
+            this.startSaveTimer()
+          }
         }
       })
     },
@@ -81,15 +84,7 @@ export default {
     },
     // 添加一个
     onAdd () {
-      let newData = {
-        w: 200,
-        h: 300,
-        x: 300,
-        y: 10,
-        title: '',
-        content: ``,
-        theme: ''
-      }
+      let newData = { w: 200, h: 300, x: 300, y: 10, title: '', content: '', theme: '' }
       this.notes.push(newData)
       addNote(newData).then(result => {
         let {data} = result
@@ -133,8 +128,6 @@ export default {
         if (!queItem) {
           this.saveQue.push(note)
         }
-        // let {title, content, z, theme} = note
-        // updNote(note._id, {title, content, z, theme})
       }
     },
     // 开始执行定时器
