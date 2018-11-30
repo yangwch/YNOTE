@@ -1,18 +1,36 @@
 <template>
   <div class="header">
     <h1>
-      <!-- <img src="../assets/logo.png" alt=""/> --> YNOTE
+      YNOTE
     </h1>
-    <div class="sys-buttons">
-      <router-link class="sys-buttons" to="/login">登录</router-link>
-      <router-link class="sys-buttons" to="/reg">注册</router-link>
+    <div class="sys-buttons" v-if="!userInfo">
+      <router-link to="/login">登录</router-link>
+      <router-link to="/reg">注册</router-link>
+    </div>
+    <div class="sys-buttons" v-if="userInfo">
+      <span class="name">{{userInfo.name}}</span>
+      <a href="javascript:;" class="sys-buttons" @click="logout">登出</a>
     </div>
   </div>
 </template>
 <script type="text/javascript">
+  /* eslint-disable */
+  import {mapState, mapActions} from 'vuex'
+  import {logout} from './../api/user'
   export default {
     data () {
       return {}
+    },
+    computed: mapState(['userInfo']),
+    methods: {
+      ...mapActions(['updUserInfo']),
+      /* 登出 */
+      logout () {
+        logout().then(result => {
+          this.updUserInfo(true)
+          this.$router.push('/login')
+        })
+      }
     }
   }
 </script>
@@ -46,7 +64,9 @@
       line-height: @height;
       padding-right: 20px;
       a {
-        font-size: 16px;
+        font-size: 12px;
+        margin-left: 10px;
+        color: cornflowerblue;
       }
     }
   }

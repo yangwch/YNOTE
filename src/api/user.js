@@ -7,3 +7,5 @@ export const regNewuser = (data) => axios.post('/api/user/reg', data)
 export const login = (data) => axios.post('/api/user/login', data)
 // 获取登录信息
 export const getLoginInfo = () => axios.get('/api/user/getLoginInfo?' + Math.random())
+// 登出
+export const logout = () => axios.get('/api/user/logout?' + Math.random())

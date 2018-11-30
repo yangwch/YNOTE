@@ -32,6 +32,7 @@
 import VueDraggableResizable from 'vue-draggable-resizable'
 import editor from '@/components/editor'
 import {getNotes, addNote, delNote, updNote} from '@/api/note'
+import {mapActions} from 'vuex'
 export default {
   name: 'home',
   components: {
@@ -54,8 +55,10 @@ export default {
     this.getData()
   },
   methods: {
+    ...mapActions(['updUserInfo']),
     // 获取数据
     getData () {
+      this.updUserInfo()
       getNotes().then(result => {
         // console.log('notes', result)
         if (!result.data.err) {
