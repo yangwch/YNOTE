@@ -23,16 +23,19 @@
         </div>
       </vue-draggable-resizable>
     </template>
-    
+    <md-progress-spinner v-if="inProgress" class="progress" :md-diameter="30" :md-stroke="3" md-mode="indeterminate"></md-progress-spinner>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 // @ is an alias to /src
 import VueDraggableResizable from 'vue-draggable-resizable'
 import editor from '@/components/editor'
 import {getNotes, addNote, delNote, updNote} from '@/api/note'
 import {mapActions} from 'vuex'
+import {MdProgress} from 'vue-material/dist/components'
+Vue.use(MdProgress)
 export default {
   name: 'home',
   components: {
@@ -48,7 +51,9 @@ export default {
       // 保存定时器
       saveTimer: null,
       // 定时器间隔 默认10s
-      timerInterval: 1000 * 10
+      timerInterval: 1000 * 10,
+      // 是否加载中
+      inProgress: false
     }
   },
   created () {
@@ -133,13 +138,22 @@ export default {
     // 开始执行定时器
     startSaveTimer () {
       this.saveTimer = setTimeout(() => {
+        let promiseArr = []
+        let endProgress = () => {
+          setTimeout(() => {
+            this.inProgress = false
+            this.startSaveTimer()
+          }, 500)
+        }
         for (var i = this.saveQue.length - 1; i >= 0; i--) {
           let note = this.saveQue[i]
           let {_id, title, content, z, theme} = note
-          updNote(_id, {title, content, z, theme})
+          this.inProgress = true
+          promiseArr.push(updNote(_id, {title, content, z, theme}))
           this.saveQue.splice(i, 1)
         }
-        this.startSaveTimer()
+        Promise.all(promiseArr).then(endProgress).catch(endProgress)
+        
       }, this.timerInterval)
     },
     // 清除timer
@@ -178,6 +192,11 @@ export default {
         height: 100%;
         position: relative;
       }
+    }
+    .progress {
+      position: fixed;
+      right: 5px;
+      bottom: 5px;
     }
   }
 </style>
