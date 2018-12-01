@@ -186,9 +186,9 @@ export default {
     height: 100%;
     overflow: auto;
     .tools {
-      position: absolute;
+      position: fixed;
       right: 5px;
-      top: 5px;
+      top: 55px;
     }
     // 笔记面板样式
     .note-item {
