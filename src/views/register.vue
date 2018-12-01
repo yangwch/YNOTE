@@ -14,8 +14,8 @@
             <label for="username">用户名</label>
             <md-input name="username" id="username" v-model="form.username" :disabled="sending" />
             <span class="md-error" v-if="!$v.form.username.required">用户名为必填项</span>
-            <span class="md-error" v-else-if="!$v.form.username.minlength || !$v.form.username.maxlength || !$v.form.username.regrule">用户名长度3-15，字母开头，可包含字母数字下划线</span>
-            <span class="md-error" v-if="!$v.form.username.unique">用户名已存在</span>
+            <span class="md-error" v-else-if="!$v.form.username.regrule">用户名长度3-15，字母开头，可包含字母数字下划线</span>
+            <span class="md-error" v-if="!$v.form.username.isUnique">用户名已存在</span>
           </md-field>
           <!-- 姓名 -->
           <md-field :class="getValidationClass('name')">
@@ -105,14 +105,18 @@
             let flag = /^[a-zA-Z][a-zA-Z0-9_]{3,15}$/.test(value)
             return flag
           },
-          unique: (value) => {
+          isUnique (value) {
+            if (value === null || value === '') {
+              return true
+            }
             let flag = /^[a-zA-Z][a-zA-Z0-9_]{3,15}$/.test(value)
             if (!flag) {
-              return flag
+              return true
             }
             return new Promise((resolve) => {
               checkUserExists(value).then(result => {
-                if (result.err) {
+                let {data} = result
+                if (data && data.err) {
                   resolve(false)
                 } else {
                   resolve(true)
