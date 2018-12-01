@@ -19,7 +19,7 @@
         @activated="() => onActivated(note)">
         <!-- 编辑器 -->
         <div class="pane-container">
-          <editor v-model="notes[index]" @onDelete="onDelete" @input="onChanged"/>
+          <editor v-model="notes[index]" @onDelete="onDelete" @input="onChanged" @changeTheme="onChangeTheme"/>
         </div>
       </vue-draggable-resizable>
     </template>
@@ -133,6 +133,13 @@ export default {
         if (!queItem) {
           this.saveQue.push(note)
         }
+      }
+    },
+    // 改变主题事件
+    onChangeTheme (note) {
+      if (note && note._id) {
+        let {theme} = note
+        updNote(note._id, {theme})
       }
     },
     // 开始执行定时器

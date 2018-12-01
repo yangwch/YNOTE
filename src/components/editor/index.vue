@@ -92,6 +92,7 @@ export default {
     onSetSink (skin) {
       this.editorValue.theme = skin
       this.showSelSinks = false
+      this.$emit('changeTheme', this.editorValue)
     },
     // 删除
     onDel () {
