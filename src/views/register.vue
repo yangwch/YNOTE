@@ -88,7 +88,7 @@
         username: null,
         name: null,
         password: null,
-        sex: null,
+        sex: '男',
         email: null,
       },
       userSaved: false,
@@ -155,7 +155,7 @@
         this.form.username = null
         this.form.password = null
         this.form.name = null
-        this.form.sex = null
+        // this.form.sex = '男'
         this.form.email = null
       },
       saveUser () {
@@ -177,7 +177,6 @@
       },
       validateUser () {
         this.$v.$touch()
-
         if (!this.$v.$invalid) {
           this.saveUser()
         }
@@ -188,7 +187,9 @@
 
 <style lang="less" scoped>
   .page-reg{
-    width: 500px;
+    min-width: 300px;
+    max-width: 550px;
+    width: 40%;
     margin: 20px auto;
   }
   .md-progress-bar {

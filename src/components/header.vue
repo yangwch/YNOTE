@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <h1>
+    <h1 @click="$router.push('/')">
       YNOTE
     </h1>
     <div class="sys-buttons" v-if="!userInfo">

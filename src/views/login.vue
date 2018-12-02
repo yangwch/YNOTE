@@ -118,7 +118,9 @@
 
 <style lang="less" scoped>
   .page-reg{
-    width: 500px;
+    min-width: 300px;
+    max-width: 550px;
+    width: 40%;
     margin: 20px auto;
   }
   .md-progress-bar {

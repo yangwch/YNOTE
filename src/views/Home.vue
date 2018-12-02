@@ -14,6 +14,7 @@
         :y="note.y || 0"
         :z="note.z || 'auto'"
         :drag-handle="'.drag'"
+        :minx="0"
         @dragstop="(x, y) => {onDrag(x, y, note)}"
         @resizestop="(x, y, w, h)=> {onResize(x, y, w, h, note)}"
         @activated="() => onActivated(note)">
@@ -36,6 +37,20 @@ import {getNotes, addNote, delNote, updNote} from '@/api/note'
 import {mapActions} from 'vuex'
 import {MdProgress} from 'vue-material/dist/components'
 Vue.use(MdProgress)
+// 验证位置
+let validPosition = (x, y, note) => {
+  let rx = x
+  let ry = y
+  if (x < -1) {
+    note.x = -1
+    rx = -1
+  }
+  if (y < -1) {
+    note.y = -1
+    ry = -1
+  }
+  return {x: rx, y: ry}
+}
 export default {
   name: 'home',
   components: {
@@ -84,7 +99,8 @@ export default {
     // 便签拖动时
     onDrag: (x, y, note) => {
       if (note._id) {
-        updNote(note._id, {x, y})
+        let position = validPosition(x, y, note)
+        updNote(note._id, {x: position.x, y: position.y})
       }
     },
     // 添加一个
@@ -119,6 +135,9 @@ export default {
           z = n.z > z ? n.z : z
         }
       })
+      if (note.z === 'auto' && z === 0) {
+        note.z = 1
+      }
       if (note.z !== z) {
         this.$set(note, 'z', z + 1)
         updNote(note._id, {z})
