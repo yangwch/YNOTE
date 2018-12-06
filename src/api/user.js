@@ -26,3 +26,8 @@ export const login = (data) => {
 export const getLoginInfo = () => axios.get('/api/user/getLoginInfo?' + Math.random())
 // 登出
 export const logout = () => axios.get('/api/user/logout?' + Math.random())
+// 修改密码
+export const changePwd = (data) => {
+  let {password, newpassword} = data
+  return axios.post('/api/user/changePwd', {password: encodePwd(password), newpassword: encodePwd(newpassword)})
+}

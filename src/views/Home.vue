@@ -161,25 +161,30 @@ export default {
         updNote(note._id, {theme})
       }
     },
+    // 保存队列
+    saveNotesInQue () {
+      let promiseArr = []
+      for (var i = this.saveQue.length - 1; i >= 0; i--) {
+        let note = this.saveQue[i]
+        let {_id, title, content, z, theme} = note
+        this.inProgress = true
+        promiseArr.push(updNote(_id, {title, content, z, theme}))
+        this.saveQue.splice(i, 1)
+      }
+      return promiseArr
+    },
+    endProgress () {
+      setTimeout(() => {
+        this.inProgress = false
+        this.startSaveTimer()
+      }, 500)
+    },
     // 开始执行定时器
     startSaveTimer () {
       this.saveTimer = setTimeout(() => {
-        let promiseArr = []
-        let endProgress = () => {
-          setTimeout(() => {
-            this.inProgress = false
-            this.startSaveTimer()
-          }, 500)
-        }
-        for (var i = this.saveQue.length - 1; i >= 0; i--) {
-          let note = this.saveQue[i]
-          let {_id, title, content, z, theme} = note
-          this.inProgress = true
-          promiseArr.push(updNote(_id, {title, content, z, theme}))
-          this.saveQue.splice(i, 1)
-        }
+        let promiseArr = this.saveNotesInQue()
+        let endProgress = this.endProgress
         Promise.all(promiseArr).then(endProgress).catch(endProgress)
-        
       }, this.timerInterval)
     },
     // 清除timer
@@ -194,15 +199,16 @@ export default {
       }
     }
   },
-  destroy () {
+  boforeDestroy () {
     this.clearTimer()
+    this.saveNotesInQue()
   }
 }
 </script>
 <style lang="less" scoped="">
   .home {
     position: relative;
-    height: 100%;
+    flex: 1;
     overflow: auto;
     .tools {
       position: fixed;

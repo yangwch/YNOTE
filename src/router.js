@@ -5,7 +5,8 @@ const Home = () => import('./views/Home.vue')
 const reg = () => import('./views/register.vue')
 // 登录
 const login = () => import('./views/login.vue')
-
+// 修改密码
+const changePwd = () => import('./views/changePwd')
 Vue.use(Router)
 
 export default new Router({
@@ -26,6 +27,11 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: login
+    },
+    {
+      path: '/changePwd',
+      name: 'changePwd',
+      component: changePwd
     },
     {
       path: '/about',
