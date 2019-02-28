@@ -1,12 +1,15 @@
+
 import Vue from 'vue'
 import Router from 'vue-router'
-const Home = () => import('./views/Home.vue')
+const home = () => import('./views/Home.vue')
 // 注册
-const reg = () => import('./views/register.vue')
+const reg = () => import('./views/Register.vue')
 // 登录
-const login = () => import('./views/login.vue')
+const login = () => import('./views/Login.vue')
 // 修改密码
-const changePwd = () => import('./views/changePwd')
+const changePwd = () => import('./views/ChangePwd')
+// 关于
+const about = () => import('./views/About')
 Vue.use(Router)
 
 export default new Router({
@@ -16,7 +19,7 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: home
     },
     {
       path: '/reg',
@@ -39,7 +42,12 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: about
+    },
+    {
+      path: '/issues',
+      name: 'issues',
+      component: () => import('./views/Issues')
     }
   ]
 })

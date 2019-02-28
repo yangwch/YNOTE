@@ -15,12 +15,12 @@
         :z="note.z || 'auto'"
         :drag-handle="'.drag'"
         :minx="0"
-        @dragstop="(x, y) => {onDrag(x, y, note)}"
-        @resizestop="(x, y, w, h)=> {onResize(x, y, w, h, note)}"
+        @dragstop="(x, y) => onDrag(x, y, note)"
+        @resizestop="(x, y, w, h)=> onResize(x, y, w, h, note)"
         @activated="() => onActivated(note)">
         <!-- 编辑器 -->
         <div class="pane-container">
-          <editor v-model="notes[index]" @onDelete="onDelete" @input="onChanged" @changeTheme="onChangeTheme"/>
+          <editor :value="notes[index]" @onDelete="onDelete" @input="onChanged" @changeTheme="onChangeTheme"/>
         </div>
       </vue-draggable-resizable>
     </template>
@@ -32,9 +32,9 @@
 import Vue from 'vue'
 // @ is an alias to /src
 import VueDraggableResizable from 'vue-draggable-resizable'
-import editor from '@/components/editor'
+import Editor from '@/components/Editor'
 import {getNotes, addNote, delNote, updNote} from '@/api/note'
-import {mapActions} from 'vuex'
+import {mapState, mapActions} from 'vuex'
 import {MdProgress} from 'vue-material/dist/components'
 Vue.use(MdProgress)
 // 验证位置
@@ -55,12 +55,12 @@ export default {
   name: 'home',
   components: {
     VueDraggableResizable,
-    editor
+    Editor
   },
   data () {
     return {
       // 面板上显示的笔记列表
-      notes: [],
+      // notes: [],
       // 待保存的队列
       saveQue: [],
       // 保存定时器
@@ -71,94 +71,68 @@ export default {
       inProgress: false
     }
   },
+  computed: mapState({
+    notes: state => state.notes.list
+  }),
   created () {
     this.getData()
   },
   methods: {
     ...mapActions(['updUserInfo']),
+    ...mapActions('notes', {
+      getNotes: 'getList',
+      addNote: 'addOne',
+      updateNote: 'updateOne',
+      deleteNote: 'deleteOne',
+      activeNote: 'activeNote',
+      changeTheme: 'changeTheme'
+    }),
     // 获取数据
     getData () {
       this.updUserInfo()
-      getNotes().then(result => {
-        // console.log('notes', result)
-        if (!result.data.err) {
-          let {res, loginState} = result.data
-          this.notes = res || []
-          if (loginState === 'on') {
-            this.startSaveTimer()
-          }
-        }
-      })
+      // 获取数据
+      this.getNotes()
     },
     // 便签拉动大小时
-    onResize: (x, y, w, h, note) => {
+    onResize (x, y, w, h, note) {
       if (note._id) {
-        updNote(note._id, {x, y, w, h, z: note.z})
+        this.updateNote({id: note._id, data: {x, y, w, h, z: note.z}})
       }
     },
     // 便签拖动时
-    onDrag: (x, y, note) => {
+    onDrag (x, y, note) {
       if (note._id) {
         let position = validPosition(x, y, note)
-        updNote(note._id, {x: position.x, y: position.y})
+        // updNote(note._id, {x: position.x, y: position.y})
+        this.updateNote({id: note._id, data: {x: position.x, y: position.y}})
       }
     },
     // 添加一个
     onAdd () {
       let newData = { w: 200, h: 300, x: 300, y: 10, title: '', content: '', theme: '' }
-      this.notes.push(newData)
-      addNote(newData).then(result => {
-        let {data} = result
-        if (data && data.res) {
-          // console.log('newData', data.res)
-          newData._id = data.res._id
-        } else if (data && data.err) {
-          alert(data.err)
-        }
-      })
+      this.addNote(newData)
     },
     // 删除
     onDelete (item) {
-      let curItem = this.notes.find(n => {
-        return n._id === item._id
-      })
-      if (curItem) {
-        this.$set(curItem, 'deleted', true)
-        delNote(curItem._id)
-      }
+      this.deleteNote(item)
     },
     // 面板激活事件
     onActivated (note) {
-      let z = 0
-      this.notes.forEach(n => {
-        if (typeof n.z === 'number' && note !== n) {
-          z = n.z > z ? n.z : z
-        }
-      })
-      if (note.z === 'auto' && z === 0) {
-        note.z = 1
-      }
-      if (note.z !== z) {
-        this.$set(note, 'z', z + 1)
-        updNote(note._id, {z})
-      }
+      this.activeNote(note)
     },
     // 取消激活时保存
     onChanged (note) {
       if (note && note._id) {
-        let queItem = this.saveQue.find(item => {
-          return item._id === note._id
-        })
-        if (!queItem) {
-          this.saveQue.push(note)
-        }
+        let {theme, title, content} = note
+        this.updateNote({id: note._id, data: {theme, title, content}})
       }
     },
     // 改变主题事件
     onChangeTheme (note) {
       if (note && note._id) {
-        let {theme} = note
-        updNote(note._id, {theme})
+        // let {theme} = note
+        // updNote(note._id, {theme})
+        this.changeTheme(note)
       }
     },
     // 保存队列

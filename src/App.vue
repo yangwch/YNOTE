@@ -9,10 +9,10 @@
   </div>
 </template>
 <script type="text/javascript">
-  import sysHeader from '@/components/header.vue'
+  import SysHeader from '@/components/Header.vue'
   export default {
     components: {
-      sysHeader
+      SysHeader
     }
   }
 </script>

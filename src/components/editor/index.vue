@@ -22,6 +22,7 @@
   </div>
 </template>
 <script type="text/javascript">
+import _ from 'lodash'
 export default {
   name: 'editor',
   data() {
@@ -71,6 +72,7 @@ export default {
       editBody.innerHTML = this.editorValue.content || ''
       // 添加事件
       editBody.onblur = this.onContentChange
+      // editBody.oninput = _.debounce(this.onContentChange.bind(this), 1500)
     },
     /**
      * 内容变化事件
@@ -80,7 +82,7 @@ export default {
       let content = editBody.innerHTML
       this.editorValue.content = content
       // console.log('change', this.editorValue)
-      this.$emit('input', this.editorValue)
+      let trigger = _this.$emit('input', this.editorValue)
     },
     /**
      * 显示可选皮肤

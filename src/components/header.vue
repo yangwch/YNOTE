@@ -11,9 +11,10 @@
       <md-menu md-size="small" md-direction="bottom-start">
         <span class="name" md-menu-trigger>{{userInfo.name}}  <i class="iconfont icon-down-circle"></i></span>
         <md-menu-content>
-          <md-menu-item @click="() => {$router.push('/changePwd')}">修改密码</md-menu-item>
-          <md-menu-item>反馈</md-menu-item>
+          <md-menu-item @click="$router.push('/changePwd')">修改密码</md-menu-item>
           <md-menu-item @click="logout">登出</md-menu-item>
+          <md-menu-item @click="$router.push('/about')">关于</md-menu-item>
+          <!-- <md-menu-item @click="$router.push('/issues')">反馈</md-menu-item> -->
         </md-menu-content>
       </md-menu>
       
