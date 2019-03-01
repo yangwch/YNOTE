@@ -20,7 +20,9 @@ export default {
     // 更新
     updateOne({commit}, updData) {
       let {id, data} = updData
-      updNote(id, data)
+      updNote(id, data).then(res => {
+        commit('updNote', {_id: id, ...data})
+      })
     },
     // 添加
     addOne({commit}, note) {
@@ -91,6 +93,12 @@ export default {
       let index = state.list.findIndex(n => { return n._id === note._id })
       if (index >= 0) {
         state.list[index] = {...state.list[index], theme: note.theme}
+      }
+    },
+    updNote (state, note) {
+      let index = state.list.findIndex(n => n._id === note._id)
+      if (index >= 0) {
+        state.list[index] = {...state.list[index], ...note}
       }
     }
   }
