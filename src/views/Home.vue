@@ -134,48 +134,7 @@ export default {
         // updNote(note._id, {theme})
         this.changeTheme(note)
       }
-    },
-    // 保存队列
-    saveNotesInQue () {
-      let promiseArr = []
-      for (var i = this.saveQue.length - 1; i >= 0; i--) {
-        let note = this.saveQue[i]
-        let {_id, title, content, z, theme} = note
-        this.inProgress = true
-        promiseArr.push(updNote(_id, {title, content, z, theme}))
-        this.saveQue.splice(i, 1)
-      }
-      return promiseArr
-    },
-    endProgress () {
-      setTimeout(() => {
-        this.inProgress = false
-        this.startSaveTimer()
-      }, 500)
-    },
-    // 开始执行定时器
-    startSaveTimer () {
-      this.saveTimer = setTimeout(() => {
-        let promiseArr = this.saveNotesInQue()
-        let endProgress = this.endProgress
-        Promise.all(promiseArr).then(endProgress).catch(endProgress)
-      }, this.timerInterval)
-    },
-    // 清除timer
-    clearTimer () {
-      if (this.saveTimer) {
-        try {
-          clearTimeout(this.saveTimer)
-          this.saveTimer = null
-        } catch (ex) {
-          this.saveTimer = null
-        }
-      }
     }
-  },
-  boforeDestroy () {
-    this.clearTimer()
-    this.saveNotesInQue()
   }
 }
 </script>

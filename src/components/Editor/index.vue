@@ -71,8 +71,8 @@ export default {
       let editBody = frameDoc.body
       editBody.innerHTML = this.editorValue.content || ''
       // 添加事件
-      editBody.onblur = this.onContentChange
-      // editBody.oninput = _.debounce(this.onContentChange.bind(this), 1500)
+      // editBody.onblur = this.onContentChange
+      editBody.oninput = _.debounce(this.onContentChange.bind(this), 5000)
     },
     /**
      * 内容变化事件
@@ -82,7 +82,7 @@ export default {
       let content = editBody.innerHTML
       this.editorValue.content = content
       // console.log('change', this.editorValue)
-      let trigger = _this.$emit('input', this.editorValue)
+      let trigger = this.$emit('input', this.editorValue)
     },
     /**
      * 显示可选皮肤
