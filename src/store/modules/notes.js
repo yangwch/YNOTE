@@ -42,7 +42,9 @@ export default {
       })
       if (curItem) {
         delNote(curItem._id)
-        commit('setDelete', curItem)
+          .then(res => {
+            commit('setDelete', curItem)
+          })
       }
     },
     // 面板点击激活 前置
@@ -59,7 +61,7 @@ export default {
       if (note.z !== z) {
         // this.$set(note, 'z', z + 1)
         updNote(note._id, {z})
-        commit('setAcitve', {note, z})
+        commit('setActive', {note, z})
       }
     },
     // 更改主题
@@ -77,10 +79,13 @@ export default {
       state.list.push(note)
     },
     setDelete (state, note) {
-      let index = state.list.findIndex(n => { return n._id === note._id })
-      if (index >= 0) {
-        state.list[index] = {...state.list[index], deleted: true}
-      }
+      state.list = state.list.map(item => {
+        if (item._id === note._id) {
+          return {...item, deleted: true}
+        } else {
+          return item
+        }
+      })
     },
     setActive (state, payload) {
       let {note, z} = payload
